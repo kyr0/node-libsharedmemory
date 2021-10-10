@@ -1,0 +1,40 @@
+{
+  "name": "node-libsharedmemory",
+  "version": "0.0.1",
+  "description": "A native module to provide cross-platform shared memory via libsharedmemory",
+  "main": "dist/binding.js",
+  "files": [
+    "build/Release",
+    "dist"
+  ],
+  "scripts": {
+    "rebuild": "cmake-js compile",
+    "install": "cmake-js compile",
+    "configure": "cmake-js print-configure",
+    "pretest": "tsc",
+    "test": "node --napi-modules ./test/test_binding.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyr0/node-sharedmemory.git"
+  },
+  "keywords": [
+    "shared-memory"
+  ],
+  "author": "Aron Homberg <info@aron-homberg.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kyr0/node-sharedmemory/issues"
+  },
+  "homepage": "https://github.com/kyr0/node-sharedmemory#readme",
+  "dependencies": {
+    "bindings": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.3",
+    "node-addon-api": "^4.2.0",
+    "cpp_libsharedmemory": "0.0.2",
+    "cmake-js": "^6.2.1",
+    "typescript": "^4.4.3"
+  }
+}
