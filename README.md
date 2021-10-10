@@ -1,6 +1,6 @@
 # `node-libsharedmemory`
 
-`node-libsharedmemory` is a native Node.js module that is based on `libsharedmemory`. It can be used to read and write to shared memory on Windows, Linux and macOS. `node-libsharedmemory` makes it easy to transfer data between isolated host OS processes and Node.js applications. It also helps inter-connecting modules of applications that are implemented in different programming languages.
+`node-libsharedmemory` is a native Node.js module that is based on [`libsharedmemory`](https://github.com/kyr0/libsharedmemory). It can be used to read and write to shared memory on Windows, Linux and macOS. `node-libsharedmemory` makes it easy to transfer data between isolated host OS processes and Node.js applications. It also helps inter-connecting modules of applications that are implemented in different programming languages.
 
 <img src="screenshot.png" width="350px" />
 
