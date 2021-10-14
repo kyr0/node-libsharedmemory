@@ -15,9 +15,9 @@ const SHM_PERSISTENT = true;
 
 const testNodeSharedMemoryWriteStream = () => {
 
-    const streamWriter = new NodeSharedMemoryWriteStream();
+    const streamWriter = new NodeSharedMemoryWriteStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    streamWriter.write("ab😃", SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    streamWriter.writeString("ab😃", SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 }
 testNodeSharedMemoryWriteStream();
 
@@ -27,9 +27,9 @@ assert(NodeSharedMemoryReadStream, "The expected class NodeSharedMemoryReadStrea
 
 const testNodeSharedMemoryReadStream = () => {
 
-    const streamReader = new NodeSharedMemoryReadStream();
+    const streamReader = new NodeSharedMemoryReadStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    const data = streamReader.read(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    const data = streamReader.readString(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
     console.log('Received UTF8 string', data);
 
@@ -48,19 +48,44 @@ const testLongString = `ab😃ab😃ab😃ab😃ab😃ab😃ab😃ab😃ab😃ab
 
 const testNodeSharedMemoryWriteReadBigStream = () => {
 
-    const streamWriter = new NodeSharedMemoryWriteStream();
+    const streamWriter = new NodeSharedMemoryWriteStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    streamWriter.write(testLongString, SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    streamWriter.writeString(testLongString, SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    const streamReader = new NodeSharedMemoryReadStream();
+    const streamReader = new NodeSharedMemoryReadStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    const data = streamReader.read(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    const data = streamReader.readString(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
     console.log('Received UTF8 string', data);
 
     assert.strictEqual(data, testLongString, "Buffer read doesnt equal the written one")
 }
 testNodeSharedMemoryWriteReadBigStream();
+
+// --- Write/Read Float32Array
+
+const testFloat32Data = Float32Array.from([3.234,4.2222,5.6667,]);
+
+const testNodeSharedMemoryWriteReadFloat32Array = () => {
+
+    const streamWriter = new NodeSharedMemoryWriteStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+    streamWriter.writeFloat32Array(testFloat32Data, SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+    const streamReader = new NodeSharedMemoryReadStream(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+    //console.log('flags!' , streamReader.readFlags());
+
+    const data = streamReader.readFloat32Array(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+    console.log('Received Float32Array', data);
+
+    assert.strictEqual(data[0], testFloat32Data[0], "Float32Array read doesn't equal the written one");
+    assert.strictEqual(data[1], testFloat32Data[1], "Float32Array read doesn't equal the written one");
+    assert.strictEqual(data[2], testFloat32Data[2], "Float32Array read doesn't equal the written one");
+}
+testNodeSharedMemoryWriteReadFloat32Array();
+
 
 // --- NodeSharedMemoryReadStream OnChange handler
 

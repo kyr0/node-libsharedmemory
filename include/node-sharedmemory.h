@@ -10,22 +10,25 @@ public:
 
     explicit NodeSharedMemoryReadStream(const Napi::CallbackInfo &);
 
-    inline Napi::Value read(const Napi::CallbackInfo &);
+    inline Napi::Value readString(const Napi::CallbackInfo &);
+    inline Napi::Value readFloat32Array(const Napi::CallbackInfo &);
+    inline Napi::Value readFlags(const Napi::CallbackInfo &);
 
     static Napi::Function GetClass(Napi::Env);
 
-private:
-    std::vector<SharedMemoryWriteStream> _readStreams;
+  private:
+    SharedMemoryReadStream _readStream;
 };
 
 class NodeSharedMemoryWriteStream : public ObjectWrap<NodeSharedMemoryWriteStream> {
 public:
     explicit NodeSharedMemoryWriteStream(const Napi::CallbackInfo &);
 
-    inline void write(const Napi::CallbackInfo &);
+    inline void writeString(const Napi::CallbackInfo &);
+    inline void writeFloat32Array(const Napi::CallbackInfo &);
   
     static Napi::Function GetClass(Napi::Env);
 
   private:
-    std::vector<SharedMemoryWriteStream> _writeStreams;
+    SharedMemoryWriteStream _writeStream;
 };
