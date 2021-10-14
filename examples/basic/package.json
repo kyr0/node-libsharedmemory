@@ -1,7 +1,7 @@
 {
   "name": "basic-usage-node-libsharedmemory",
   "version": "1.0.0",
-  "description": "",
+  "description": "Basic example on how to use node-libsharedmemory",
   "main": "index.js",
   "scripts": {
     "test": "node index.js"
@@ -9,6 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "node-libsharedmemory": "0.0.4"
+    "node-libsharedmemory": "0.0.5"
   }
 }

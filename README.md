@@ -16,11 +16,11 @@ const {
 // using libsharedmemory to write data
 const streamWriter = new NodeSharedMemoryWriteStream();
 
-streamWriter.write(`{ remoteApp: { is: 'sending', data: 'ab😃ab😃ab😃' } }`);
+streamWriter.writeString(`{ remoteApp: { is: 'sending', data: 'ab😃ab😃ab😃' } }`);
 
 const streamReader = new NodeSharedMemoryReadStream();
 
-const data = streamReader.read();
+const data = streamReader.readString();
 
 // data equals the data written via .write() before
 console.log('Data received from shared memory', data);

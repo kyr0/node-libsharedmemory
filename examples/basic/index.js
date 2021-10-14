@@ -9,15 +9,11 @@ const assert = require("assert");
 
 assert(NodeSharedMemoryWriteStream, "The expected class NodeSharedMemoryWriteStream is undefined");
 
-const SHM_SEGMENT_NAME = "foo" + Date.now();
-const SHM_SEGMENT_SIZE = 65535;
-const SHM_PERSISTENT = true;
-
 const testNodeSharedMemoryWriteStream = () => {
 
     const streamWriter = new NodeSharedMemoryWriteStream();
 
-    streamWriter.write("ab😃", SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    streamWriter.writeString("ab😃");
 }
 testNodeSharedMemoryWriteStream();
 
@@ -29,7 +25,7 @@ const testNodeSharedMemoryReadStream = () => {
 
     const streamReader = new NodeSharedMemoryReadStream();
 
-    const data = streamReader.read(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    const data = streamReader.readString();
 
     console.log('Received UTF8 string', data);
 
@@ -50,11 +46,11 @@ const testNodeSharedMemoryWriteReadBigStream = () => {
 
     const streamWriter = new NodeSharedMemoryWriteStream();
 
-    streamWriter.write(testLongString, SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    streamWriter.writeString(testLongString);
 
     const streamReader = new NodeSharedMemoryReadStream();
 
-    const data = streamReader.read(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+    const data = streamReader.readString();
 
     console.log('Received UTF8 string', data);
 
