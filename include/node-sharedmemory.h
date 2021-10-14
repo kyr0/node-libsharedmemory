@@ -5,6 +5,12 @@
 using namespace Napi;
 using namespace lsm;
 
+struct StreamConfig {
+  std::string sharedMemoryIdent;
+  size_t bufferSize;
+  bool isPersistent;
+};
+
 class NodeSharedMemoryReadStream : public ObjectWrap<NodeSharedMemoryReadStream> {
 public:
 

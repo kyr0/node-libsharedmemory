@@ -12,19 +12,15 @@ const {
     NodeSharedMemoryReadStream
 } = require("node-libsharedmemory");
 
-const SHM_SEGMENT_NAME = "nameOfTheSharedMemorySegment"; // must be unique
-const SHM_SEGMENT_SIZE = 65535 /* in bytes, string length * 2 */;
-const SHM_PERSISTENT = true; // makes sure the memory is persisted until reboot
-
 // this can happen in other Node.js processes or any other application
 // using libsharedmemory to write data
 const streamWriter = new NodeSharedMemoryWriteStream();
 
-streamWriter.write(`{ remoteApp: { is: 'sending', data: 'ab😃ab😃ab😃' } }`, SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+streamWriter.write(`{ remoteApp: { is: 'sending', data: 'ab😃ab😃ab😃' } }`);
 
 const streamReader = new NodeSharedMemoryReadStream();
 
-const data = streamReader.read(SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+const data = streamReader.read();
 
 // data equals the data written via .write() before
 console.log('Data received from shared memory', data);
@@ -41,7 +37,8 @@ The example `examples/basic` should be pretty self-explanatory.
 ## Limits
 
 `libsharedmemory` does only support the following datatypes:
-- string
+- String
+- Number (float32)
 
 On Windows: Atm no support for shared memory persistency after the process 
 that writes the memory quits.
@@ -62,6 +59,6 @@ The module can be tested via: `npm test`
 
 ## Roadmap
 
-1) Support for `TypedArray` (`DataView`) 
+1) Support for `double`
 2) An `onChange()` event handling abstraction (currently needs a for-loop change detection)
 3) Windows shared memory persistency support
