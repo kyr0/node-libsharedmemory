@@ -166,6 +166,65 @@ const testNodeSharedMemoryWriteReadFloat32Array = () => {
 }
 testNodeSharedMemoryWriteReadFloat32Array();
 
+// --- Linear async read/write in non-deterministic time domain
+
+const streamWriter = new NodeSharedMemoryWriteStream(
+    SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+const streamReader = new NodeSharedMemoryReadStream(
+    SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+
+const genFloat32Array = () => {
+    const floats = [];
+    for (let i=0; i<255; i++) {
+        floats.push(
+            Math.exp(Math.floor(Math.random() * 9) + 1)
+        );
+    }
+    return new Float32Array(floats);
+}
+
+let i = 0;
+let prevDataRecieved;
+let j = 0;
+
+const readInterval = setInterval(() => {
+
+    const currentDataReceived = streamReader.readFloat32Array();
+
+    if (currentDataReceived && currentDataReceived[0] && 
+        (currentDataReceived[0] === prevDataRecieved[0] && 
+        currentDataReceived[255] === prevDataRecieved[255]) 
+        && i >= 100) {
+
+        console.log('Async/linear read/write test: Received', j-1, 'float32 samples.')
+
+        clearInterval(readInterval)
+    } else {
+
+        if (currentDataReceived && currentDataReceived[0]) {
+            j++;
+        }
+        prevDataRecieved = currentDataReceived;
+    }
+    
+}, 0)
+
+const writeInterval = setInterval(() => {
+
+    streamWriter.writeFloat32Array(genFloat32Array());
+
+    if (i === 100) {
+        clearInterval(writeInterval)
+    }
+    i++;
+    
+}, 0)
+
+
+
+
+
 
 // --- NodeSharedMemoryReadStream OnChange handler
 
