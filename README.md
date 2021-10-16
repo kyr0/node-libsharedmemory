@@ -51,8 +51,6 @@ To re-build the module from source call: `npm run rebuild`
 
 The module can be tested via: `npm test`
 
-```
-
 ## License
 
 `node-libsharedmemory` is released under the MIT license, see the `LICENSE` file.
