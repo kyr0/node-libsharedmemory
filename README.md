@@ -37,11 +37,17 @@ The example `examples/basic` should be pretty self-explanatory.
 ## Limits
 
 `libsharedmemory` does only support the following datatypes:
-- String
-- Number (float32)
+- `String` (`readString`, `writeString`)
+- `Float32Array` (`readFloatArray`, `writeFloatArray`)
+- `Float64Array` (`readDoubleArray`, `writeDoubleArray`)
 
-On Windows: Atm no support for shared memory persistency after the process 
-that writes the memory quits.
+- This library doesn't care for endinanness. This should be naturally fine
+because shared memory shouldn't be shared between different machine 
+architectures. However, if you plan to copy the shared buffer onto a 
+network layer prototcol, make sure to add an endianess indication bit.
+
+- At the time of writing, there is no support for shared memory persistency
+on Windows. Shared memory is lost after the writing process is killed.
 
 ## Build
 
@@ -57,6 +63,5 @@ The module can be tested via: `npm test`
 
 ## Roadmap
 
-1) Support for `double`
-2) An `onChange()` event handling abstraction (currently needs a for-loop change detection)
-3) Windows shared memory persistency support
+1) Native `onChange()` event handling abstraction (currently needs a for-loop change detection in V8)
+2) Windows shared memory persistency support

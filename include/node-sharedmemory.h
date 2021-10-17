@@ -17,7 +17,8 @@ public:
     explicit NodeSharedMemoryReadStream(const Napi::CallbackInfo &);
 
     inline Napi::Value readString(const Napi::CallbackInfo &);
-    inline Napi::Value readFloat32Array(const Napi::CallbackInfo &);
+    inline Napi::Value readFloatArray(const Napi::CallbackInfo &);
+    inline Napi::Value readDoubleArray(const Napi::CallbackInfo &);
     inline Napi::Value readFlags(const Napi::CallbackInfo &);
 
     static Napi::Function GetClass(Napi::Env);
@@ -31,7 +32,8 @@ public:
     explicit NodeSharedMemoryWriteStream(const Napi::CallbackInfo &);
 
     inline void writeString(const Napi::CallbackInfo &);
-    inline void writeFloat32Array(const Napi::CallbackInfo &);
+    inline void writeFloatArray(const Napi::CallbackInfo &);
+    inline void writeDoubleArray(const Napi::CallbackInfo &);
   
     static Napi::Function GetClass(Napi::Env);
 

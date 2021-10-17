@@ -119,8 +119,12 @@ const testNodeSharedMemoryWriteReadBigStream = () => {
         SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
     const data = streamReader.readString();
+    assert.strictEqual(renderBinaryString(streamReader.readFlags()), '0b00000011', 'Change bit missing');
 
     console.log('Received UTF8 string', data);
+
+    streamWriter.writeString(testLongString);
+    assert.strictEqual(renderBinaryString(streamReader.readFlags()), '0b00000010', 'Change bit where it should not be');
 
     assert.strictEqual(
         data, 
@@ -129,42 +133,42 @@ const testNodeSharedMemoryWriteReadBigStream = () => {
 }
 testNodeSharedMemoryWriteReadBigStream();
 
-// --- Write/Read Float32Array
+// --- Write/Read FloatArray
 
-const testFloat32Data = Float32Array.from([3.234,4.2222,5.6667,]);
+const testFloatData = Float32Array.from([3.2340000,4.22220000,5.6667000,]);
 
-const testNodeSharedMemoryWriteReadFloat32Array = () => {
+const testNodeSharedMemoryWriteReadFloatArray = () => {
 
     const streamWriter = new NodeSharedMemoryWriteStream(
         SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    streamWriter.writeFloat32Array(testFloat32Data);
+    streamWriter.writeFloatArray(testFloatData);
 
     const streamReader = new NodeSharedMemoryReadStream(
         SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
-    //console.log('flags!' , streamReader.readFlags());
+    const data = streamReader.readFloatArray();
 
-    const data = streamReader.readFloat32Array();
+    assert.strictEqual(renderBinaryString(streamReader.readFlags()), '0b00000101', 'Change bit missing or data type incorrect');
 
     console.log('Received Float32Array', data);
 
     assert.strictEqual(
         data[0], 
-        testFloat32Data[0], 
+        testFloatData[0], 
         "Float32Array read doesn't equal the written one");
 
     assert.strictEqual(
         data[1], 
-        testFloat32Data[1], 
+        testFloatData[1], 
         "Float32Array read doesn't equal the written one");
 
     assert.strictEqual(
         data[2], 
-        testFloat32Data[2], 
+        testFloatData[2], 
         "Float32Array read doesn't equal the written one");
 }
-testNodeSharedMemoryWriteReadFloat32Array();
+testNodeSharedMemoryWriteReadFloatArray();
 
 // --- Linear async read/write in non-deterministic time domain
 
@@ -187,17 +191,22 @@ const genFloat32Array = () => {
 let i = 0;
 let prevDataRecieved;
 let j = 0;
+let changeFlag = false;
 
 const readInterval = setInterval(() => {
 
-    const currentDataReceived = streamReader.readFloat32Array();
+    const currentDataReceived = streamReader.readFloatArray();
+    const flags = streamReader.readFlags();
+    const changeBit = flags & kMemoryChanged;
+
+        //console.log('flags', renderBinaryString(flags));
 
     if (currentDataReceived && currentDataReceived[0] && 
         (currentDataReceived[0] === prevDataRecieved[0] && 
         currentDataReceived[255] === prevDataRecieved[255]) 
         && i >= 100) {
 
-        console.log('Async/linear read/write test: Received', j-1, 'float32 samples.')
+        console.log('Async/linear read/write test: Received', j-1, 'Float samples.')
 
         clearInterval(readInterval)
     } else {
@@ -212,7 +221,7 @@ const readInterval = setInterval(() => {
 
 const writeInterval = setInterval(() => {
 
-    streamWriter.writeFloat32Array(genFloat32Array());
+    streamWriter.writeFloatArray(genFloat32Array());
 
     if (i === 100) {
         clearInterval(writeInterval)
@@ -222,32 +231,46 @@ const writeInterval = setInterval(() => {
 }, 0)
 
 
+// --- Write/Read Float64Array
 
+const testFloat64Data = Float64Array.from([
+    3434367673.2334367434343433434,
+    34343434467.2223434343343423434,
+    534343676767.6663434343434,
+]);
 
-
-
-// --- NodeSharedMemoryReadStream OnChange handler
-
-/*
-const testNodeSharedMemoryReadStreamOnChangeHandler = () => {
+const testNodeSharedMemoryWriteReadFloat64Array = () => {
 
     const streamWriter = new NodeSharedMemoryWriteStream(
-        "lala", SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+        SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
+    streamWriter.writeDoubleArray(testFloat64Data);
 
     const streamReader = new NodeSharedMemoryReadStream(
-        "lala", SHM_SEGMENT_SIZE, SHM_PERSISTENT);
+        SHM_SEGMENT_NAME, SHM_SEGMENT_SIZE, SHM_PERSISTENT);
 
+    assert.strictEqual(renderBinaryString(streamReader.readFlags()), '0b00001001', 'Change bit missing or data type incorrect');
 
-    streamReader.onChange(function(data) {
+    const data = streamReader.readDoubleArray();
 
-        console.log('got called!', data);
-    })
+    console.log('Received Float64Array', data);
 
-    streamWriter.write("abc");
+    assert.strictEqual(
+        data[0], 
+        testFloat64Data[0], 
+        "Float64Array read doesn't equal the written one");
 
+    assert.strictEqual(
+        data[1], 
+        testFloat64Data[1], 
+        "Float64Array read doesn't equal the written one");
+
+    assert.strictEqual(
+        data[2], 
+        testFloat64Data[2], 
+        "Float64Array read doesn't equal the written one");
 }
-testNodeSharedMemoryReadStreamOnChangeHandler();
-*/
+testNodeSharedMemoryWriteReadFloat64Array();
+
 
 console.log("Tests passed -- everything looks OK!");

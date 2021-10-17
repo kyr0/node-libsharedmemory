@@ -50,7 +50,7 @@ Napi::Value NodeSharedMemoryReadStream::readString(const Napi::CallbackInfo &inf
     return Napi::String::New(info.Env(), _readStream.readString());
 }
 
-Napi::Value NodeSharedMemoryReadStream::readFloat32Array(const Napi::CallbackInfo &info) {
+Napi::Value NodeSharedMemoryReadStream::readFloatArray(const Napi::CallbackInfo &info) {
 
     float *floatArrayData = _readStream.readFloatArray();
     ArrayBuffer ab = ArrayBuffer::New(info.Env(), floatArrayData, _readStream.readSize(kMemoryTypeFloat));
@@ -58,12 +58,20 @@ Napi::Value NodeSharedMemoryReadStream::readFloat32Array(const Napi::CallbackInf
     return Float32Array::New(info.Env(), _readStream.readLength(kMemoryTypeFloat), ab, 0);
 }
 
+Napi::Value NodeSharedMemoryReadStream::readDoubleArray(const Napi::CallbackInfo &info) {
+
+    double *doubleArrayData = _readStream.readDoubleArray();
+    ArrayBuffer ab = ArrayBuffer::New(info.Env(), doubleArrayData, _readStream.readSize(kMemoryTypeDouble));
+    
+    return Float64Array::New(info.Env(), _readStream.readLength(kMemoryTypeDouble), ab, 0);
+}
+
 Napi::Function NodeSharedMemoryReadStream::GetClass(Napi::Env env) {
     return DefineClass(env, "NodeSharedMemoryReadStream", {
         NodeSharedMemoryReadStream::InstanceMethod("readString", &NodeSharedMemoryReadStream::readString),
-        NodeSharedMemoryReadStream::InstanceMethod("readFloat32Array", &NodeSharedMemoryReadStream::readFloat32Array),
+        NodeSharedMemoryReadStream::InstanceMethod("readFloatArray", &NodeSharedMemoryReadStream::readFloatArray),
         NodeSharedMemoryReadStream::InstanceMethod("readFlags", &NodeSharedMemoryReadStream::readFlags),
-        //NodeSharedMemoryReadStream::InstanceMethod("readDoubleArray", &NodeSharedMemoryReadStream::readDoubleArray),
+        NodeSharedMemoryReadStream::InstanceMethod("readDoubleArray", &NodeSharedMemoryReadStream::readDoubleArray),
     });
 }
 
@@ -85,16 +93,23 @@ void NodeSharedMemoryWriteStream::writeString(const Napi::CallbackInfo &info) {
     _writeStream.write(data);
 }
 
-void NodeSharedMemoryWriteStream::writeFloat32Array(const Napi::CallbackInfo &info) {
+void NodeSharedMemoryWriteStream::writeFloatArray(const Napi::CallbackInfo &info) {
     Napi::Float32Array numberArray = info[0].As<Napi::Float32Array>();
     float* numbers = numberArray.Data();
+    _writeStream.write(numbers, numberArray.ElementLength());
+}
+
+void NodeSharedMemoryWriteStream::writeDoubleArray(const Napi::CallbackInfo &info) {
+    Napi::Float64Array numberArray = info[0].As<Napi::Float64Array>();
+    double* numbers = numberArray.Data();
     _writeStream.write(numbers, numberArray.ElementLength());
 }
 
 Napi::Function NodeSharedMemoryWriteStream::GetClass(Napi::Env env) {
     return DefineClass(env, "NodeSharedMemoryWriteStream", {
         NodeSharedMemoryWriteStream::InstanceMethod("writeString", &NodeSharedMemoryWriteStream::writeString),
-        NodeSharedMemoryWriteStream::InstanceMethod("writeFloat32Array", &NodeSharedMemoryWriteStream::writeFloat32Array),
+        NodeSharedMemoryWriteStream::InstanceMethod("writeFloatArray", &NodeSharedMemoryWriteStream::writeFloatArray),
+        NodeSharedMemoryWriteStream::InstanceMethod("writeDoubleArray", &NodeSharedMemoryWriteStream::writeDoubleArray),
     });
 }
 
