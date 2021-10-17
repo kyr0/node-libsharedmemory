@@ -1,6 +1,6 @@
 {
   "name": "node-libsharedmemory",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A native module to provide cross-platform shared memory via libsharedmemory",
   "main": "dist/binding.js",
   "files": [
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^16.10.3",
     "typescript": "^4.4.3",
-    "cpp_libsharedmemory": "0.0.8",
+    "cpp_libsharedmemory": "0.0.9",
     "node-addon-api": "^4.2.0",
     "cmake-js": "^6.2.1"
   }
