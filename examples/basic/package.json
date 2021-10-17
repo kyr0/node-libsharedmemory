@@ -9,6 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "node-libsharedmemory": "0.0.7"
+    "node-libsharedmemory": "0.0.8"
   }
 }
