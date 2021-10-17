@@ -191,23 +191,24 @@ const genFloat32Array = () => {
 let i = 0;
 let prevDataRecieved;
 let j = 0;
-let changeFlag = false;
+let prevChangeBitValue;
 
 const readInterval = setInterval(() => {
 
     const currentDataReceived = streamReader.readFloatArray();
+    if (typeof currentDataReceived === 'undefined' || !currentDataReceived[0]) return;
+
     const flags = streamReader.readFlags();
-    const changeBit = flags & kMemoryChanged;
+    const changeBitValue = flags & kMemoryChanged;
+    const dataHasChanged = changeBitValue !== prevChangeBitValue;
+    prevChangeBitValue = changeBitValue;
 
-        //console.log('flags', renderBinaryString(flags));
+    // bitwise change detection
+    if (!dataHasChanged) return;
 
-    if (currentDataReceived && currentDataReceived[0] && 
-        (currentDataReceived[0] === prevDataRecieved[0] && 
-        currentDataReceived[255] === prevDataRecieved[255]) 
-        && i >= 100) {
-
-        console.log('Async/linear read/write test: Received', j-1, 'Float samples.')
-
+    // end of test condition check
+    if (i >= 100 && j >= 100) {
+        console.log('Async/linear read/write test: Received', j, 'float samples.')
         clearInterval(readInterval)
     } else {
 
@@ -216,7 +217,6 @@ const readInterval = setInterval(() => {
         }
         prevDataRecieved = currentDataReceived;
     }
-    
 }, 0)
 
 const writeInterval = setInterval(() => {
