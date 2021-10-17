@@ -1,6 +1,6 @@
 {
   "name": "node-libsharedmemory",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A native module to provide cross-platform shared memory via libsharedmemory",
   "main": "dist/binding.js",
   "files": [
